@@ -736,6 +736,59 @@ Documented setup, testing results, limitations and transparent AI usage with AI 
 Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
 ```
 
+## Prompt 13 - Final Submission Audit
+
+```text
+Perform a final submission audit of the entire repository.
+
+Verify:
+
+Backend starts successfully.
+Frontend starts successfully.
+Frontend build succeeds.
+All backend tests pass.
+All frontend tests pass.
+Coverage report is generated.
+Registration and login work.
+JWT-protected endpoints work.
+Admin authorization works.
+Search and filtering work.
+Purchase decreases stock.
+Zero-stock purchase is blocked.
+Restocking increases stock.
+JSON files remain valid.
+.env files are ignored.
+.env.example files exist.
+node_modules is ignored.
+No password or JWT secret is committed.
+README instructions are accurate.
+PROMPTS.md contains every prompt.
+TEST_REPORT.md uses actual results.
+AI co-author trailers are present in AI-assisted commits.
+No TypeScript exists.
+No Tailwind exists.
+No database package exists.
+No copied repository code exists.
+
+Fix only real problems discovered during the audit.
+Do not redesign the project.
+
+Then show:
+
+Final test results.
+Final folder structure.
+Remaining limitations.
+Exact run commands.
+Exact Git Bash commands for the final commit.
+
+Final commit:
+
+chore: complete final submission audit
+
+Verified application functionality, tests, documentation, security and repository readiness with AI assistance.
+```
+
+
 
 
 
