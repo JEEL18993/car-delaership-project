@@ -21,10 +21,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const data = await authApi.login({ email, password });
-      login(data.token, data.user);
-      showToast(`Welcome back, ${data.user.name}!`, 'success');
-      if (data.user.role === 'admin') {
+      const response = await authApi.login({ email, password });
+      const user = response.user || response.data;
+      const token = response.token;
+
+      login(token, user);
+      showToast(`Welcome back, ${user.name}!`, 'success');
+      if (user.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/');
