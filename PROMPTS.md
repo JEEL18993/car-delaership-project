@@ -422,6 +422,90 @@ feat: add admin seeding and backend verification
 Added a safe admin seeding workflow and verified the complete backend API with AI assistance.
 ```
 
+## Prompt 8 - React Frontend Foundation
+
+```text
+Create the frontend using React with JavaScript and Vite.
+
+Rules:
+
+Do not use TypeScript.
+Do not use Tailwind.
+Do not use Bootstrap.
+Do not use Material UI.
+Use plain responsive CSS.
+Use React Router.
+Use Axios.
+Keep the design clean and basic.
+Do not overengineer state management.
+Use Context API only for authentication.
+
+Pages:
+
+Home / vehicle dashboard
+Login
+Register
+Admin dashboard
+Not Found
+
+Components:
+
+Navbar
+VehicleCard
+VehicleList
+SearchFilters
+LoadingSpinner
+EmptyState
+ProtectedRoute
+AdminRoute
+VehicleForm
+ConfirmDialog
+
+Frontend functionality:
+
+Register user.
+Login user.
+Save JWT and user details in localStorage.
+Automatically attach JWT through an Axios interceptor.
+Logout user.
+Display all vehicles.
+Search by make, model and category.
+Filter by minimum and maximum price.
+Purchase a vehicle.
+Disable Purchase when quantity is zero.
+Immediately update quantity after purchase.
+Show success and error messages.
+Admin can add, edit, delete and restock vehicles.
+Ask for confirmation before deleting.
+Redirect unauthorized users.
+Responsive desktop and mobile layout.
+
+Environment:
+
+Create frontend/.env.example with:
+VITE_API_URL=http://localhost:5000/api
+
+Testing:
+
+Configure Vitest and React Testing Library.
+Do not implement all tests yet.
+Add one simple App rendering test to confirm setup.
+
+Also:
+
+Append this prompt to PROMPTS.md.
+Run npm install.
+Run npm test.
+Run npm run build.
+Fix all build errors.
+
+Show the commit command:
+
+feat: create React frontend foundation
+Created the React application, routing, authentication context and responsive CSS foundation with AI assistance.
+```
+
+
 
 
 
