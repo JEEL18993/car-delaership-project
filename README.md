@@ -16,7 +16,7 @@ The **Car Dealership Inventory System** is a student web application designed to
 - 🔑 **Role-Based Access Control**: Distinguishes between regular users (`user`) and administrators (`admin`).
 - 🚘 **Vehicle Catalog**: Responsive grid displaying vehicle details, images, pricing, and real-time inventory counts.
 - 🔍 **Live Search & Multi-field Filtering**: Instant search by make, model, category, and minimum/maximum price bounds.
-- 🛒 **Vehicle Purchase Workflow**: Authenticated users can purchase vehicles in real time. Automatically decreases stock quantity and disables purchase when out of stock (`quantity = 0`).
+- 🛒 **Vehicle Purchase Workflow**: Authenticated users can purchase vehicles in real time. Automatically decreases stock quantity and disables purchase when out of stock (`quantity = 0`) via stock-validated purchase operations.
 - 📦 **Admin Inventory Management**: Add new vehicles, update vehicle specifications, restock inventory units, and delete vehicles with confirmation dialogs.
 - 🛡️ **Protected Routes & Expiration Handling**: React Router route guards and Axios request/response interceptors to handle JWT bearer headers and token expiry gracefully.
 
@@ -41,6 +41,14 @@ The **Car Dealership Inventory System** is a student web application designed to
 
 ---
 
+## Intentional Simplifications & Architecture Scope
+
+> [!NOTE]
+> **Database & CSS Framework Notice**:
+> This project intentionally uses **local JSON file storage** instead of an external database (such as MongoDB, PostgreSQL, or MySQL) and **plain Vanilla CSS3** instead of Tailwind CSS. These were intentional architectural choices to keep the project basic, readable, lightweight, and easy to review without requiring external database server installations or build setup overhead.
+
+---
+
 ## Folder Structure
 
 ```text
@@ -51,6 +59,7 @@ dealership project/
 ├── TEST_REPORT.md
 ├── docs/
 │   └── screenshots/
+│       ├── .gitkeep
 │       ├── login.png
 │       ├── vehicles.png
 │       └── admin.png
@@ -161,7 +170,7 @@ dealership project/
    ```
 3. Seed default admin user:
    ```bash
-   npm run seed
+   npm run seed:admin
    ```
 4. Start development server:
    ```bash
@@ -189,22 +198,22 @@ dealership project/
 
 ---
 
-## Environment Variables
+## Environment Variables Example
 
-### Backend Configuration (`backend/.env`)
+### Backend Configuration (`backend/.env.example`)
 ```env
 PORT=5000
-JWT_SECRET=super_secret_jwt_key_dealership_2026
+JWT_SECRET=replace_with_a_long_random_secret
 NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
 
 # Admin Seeding Variables
-ADMIN_NAME=System Admin
-ADMIN_EMAIL=admin@dealership.com
-ADMIN_PASSWORD=AdminSecret123!
+ADMIN_NAME=Your Admin Name
+ADMIN_EMAIL=your-admin@example.com
+ADMIN_PASSWORD=replace_with_a_strong_password
 ```
 
-### Frontend Configuration (`frontend/.env`)
+### Frontend Configuration (`frontend/.env.example`)
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
@@ -222,7 +231,7 @@ npm test
 ### Running Backend Coverage
 ```bash
 cd backend
-npx jest --coverage --runInBand
+npm run test:coverage
 ```
 
 ### Running Frontend Tests (Vitest + RTL)
@@ -233,9 +242,9 @@ npm test
 
 ---
 
-## Test Coverage
+## Test Coverage Summary
 
-### Backend Test Metrics
+### Backend Test Metrics (Jest)
 - **Test Suites**: 6 Passed
 - **Total Tests**: 57 Passed (0 Failed)
 - **Statements**: 92.74%
@@ -243,7 +252,7 @@ npm test
 - **Functions**: 93.75%
 - **Lines**: 93.24%
 
-### Frontend Test Metrics
+### Frontend Test Metrics (Vitest)
 - **Test Suites**: 4 Passed
 - **Total Tests**: 14 Passed (0 Failed)
 
@@ -251,24 +260,21 @@ npm test
 
 ## Admin Account Setup
 
-To create an initial admin account without exposing hardcoded passwords in source code, use the included seeding script:
+To create an initial admin account without exposing hardcoded passwords in source code, copy `.env.example` to `.env`, set your desired secret values, and run the seeding script:
 
 ```bash
 cd backend
-npm run seed
+npm run seed:admin
 ```
 
 This reads credentials from `.env` (`ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`) and creates a hashed admin user if one does not already exist.
-
-**Default Credentials**:
-- **Email**: `admin@dealership.com`
-- **Password**: `AdminSecret123!`
 
 ---
 
 ## Screenshots
 
-Below are placeholders for the primary application workflows:
+> [!NOTE]
+> Screenshot files (`docs/screenshots/login.png`, `docs/screenshots/vehicles.png`, `docs/screenshots/admin.png`) are referenced below. Actual application screenshots still need to be captured and added to the `docs/screenshots/` directory.
 
 ### 1. User Login Page
 ![User Login](docs/screenshots/login.png)
@@ -301,7 +307,7 @@ An AI coding assistant (**Google Antigravity**) was used during the development 
 2. **Manual Oversight & Review**: Every piece of AI-generated code, component, and validation function was **manually reviewed, edited, and verified** for correctness.
 3. **Automated Verification**: AI-generated logic was rigorously validated using automated unit and integration tests (57 backend tests + 14 frontend tests).
 4. **Git Commit Co-Authoring**: Commit messages include co-author trailers (`Co-authored-by: AI Assistant <ai-assistant@users.noreply.github.com>`) for transparent attribution.
-5. **Prompt History**: The complete sequence of prompts used during development is recorded in [`PROMPTS.md`](file:///c:/Users/admin/OneDrive/Desktop/dealership%20project/PROMPTS.md).
+5. **Prompt History**: The complete sequence of prompts used during development is recorded in [`PROMPTS.md`](./PROMPTS.md).
 
 > [!NOTE]
 > **Reflection**: Utilizing AI dramatically accelerated boilerplate creation and test generation. However, strict manual verification and TDD assertions were essential to catch edge-case bugs (such as parallel file test collisions and DOM accessible role queries).

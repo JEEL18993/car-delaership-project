@@ -788,6 +788,81 @@ chore: complete final submission audit
 Verified application functionality, tests, documentation, security and repository readiness with AI assistance.
 ```
 
+## Prompt 14 - Documentation Security & Accuracy Correction
+
+```text
+Review and correct the existing Car Dealership Inventory System repository without redesigning the project.
+
+Make only the following changes:
+
+1. Security documentation:
+
+* Replace all realistic JWT secrets, admin emails and admin passwords in README.md and backend/.env.example with safe placeholders.
+* Use:
+  JWT_SECRET=replace_with_a_long_random_secret
+  ADMIN_NAME=Your Admin Name
+  ADMIN_EMAIL=your-admin@example.com
+  ADMIN_PASSWORD=replace_with_a_strong_password
+* Remove the “Default Credentials” section from README.md.
+* Do not modify or commit any real .env file.
+
+2. README links:
+
+* Replace the local Windows PROMPTS.md file link with:
+  [PROMPTS.md](./PROMPTS.md)
+
+3. Screenshots:
+
+* Confirm whether docs/screenshots/login.png, vehicles.png and admin.png are real application screenshots.
+* If they are real, remove the word “placeholders” from README.md.
+* If they are not real, do not create fake screenshots. Clearly report that actual screenshots still need to be added.
+
+4. Backend npm scripts:
+   Add these scripts without removing existing working scripts:
+
+* "test:watch": "jest --watch --runInBand"
+* "test:coverage": "jest --coverage --runInBand"
+* "seed:admin": "node scripts/seedAdmin.js"
+
+5. Documentation accuracy:
+
+* Do not claim full compliance with the original assignment because the project uses JSON persistence instead of an external database and Vanilla CSS instead of Tailwind.
+* State that these were intentional simplifications.
+* Replace “stock-locking purchase operations” with “stock-validated purchase operations”.
+* Ensure test versions and commands match package.json and package-lock.json.
+* Do not invent test counts or coverage numbers.
+
+6. Verification:
+   Run:
+
+* cd backend && npm test
+* cd backend && npm run test:coverage
+* cd frontend && npm test
+* cd frontend && npm run build
+
+Do not change business functionality unless a test or build failure requires it.
+
+After completion, show:
+
+* Files changed
+* Exact changes made
+* Backend test result
+* Frontend test result
+* Production build result
+* Any remaining limitations
+
+Append this prompt to PROMPTS.md.
+
+Use this commit message:
+
+docs: correct security examples and submission documentation
+
+Removed realistic example credentials, fixed repository links and improved documentation accuracy with AI assistance.
+
+Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
+```
+
+
 
 
 
