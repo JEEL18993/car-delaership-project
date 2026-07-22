@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.production
+
+# Testing & Coverage
+coverage/
+
+# Build & Dist Outputs
+dist/
+build/
+frontend/dist/
+frontend/build/
+
+# Logs & Operating System Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
