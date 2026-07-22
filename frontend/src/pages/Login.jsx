@@ -43,6 +43,11 @@ const Login = () => {
     setPassword('AdminPassword123!');
   };
 
+  const handleQuickFillUser = () => {
+    setEmail('omgohel51@gmail.com');
+    setPassword('Password123!');
+  };
+
   return (
     <div className="auth-split-wrapper">
       <div className="auth-visual-side">
@@ -113,16 +118,26 @@ const Login = () => {
 
           <div style={{ marginTop: '1.5rem', padding: '0.85rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>
-              Need an admin account to test inventory management?
+              Quick Demo Logins:
             </span>
-            <button
-              type="button"
-              onClick={handleQuickFillAdmin}
-              className="btn btn-secondary"
-              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
-            >
-              ⚡ Fill Admin Credentials
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+              <button
+                type="button"
+                onClick={handleQuickFillAdmin}
+                className="btn btn-secondary"
+                style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem' }}
+              >
+                ⚡ Admin Login
+              </button>
+              <button
+                type="button"
+                onClick={handleQuickFillUser}
+                className="btn btn-secondary"
+                style={{ fontSize: '0.8rem', padding: '0.35rem 0.65rem' }}
+              >
+                👤 User Login
+              </button>
+            </div>
           </div>
 
           <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
