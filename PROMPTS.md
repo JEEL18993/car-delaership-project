@@ -617,6 +617,53 @@ Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
 https://github.com/JEEL18993/car-delaership-project
 ```
 
+## Prompt 11 - Code Quality Review & Refactoring
+
+```text
+Review the complete project for clean code and refactor it without changing behaviour.
+
+Check:
+
+Duplicate code
+Large functions
+Controllers containing business logic
+Inconsistent API responses
+Weak validation
+Unclear variable names
+Missing error handling
+Exposed passwords or tokens
+Hardcoded URLs or secrets
+Unused imports
+Console logs
+Broken mobile layout
+Accessibility problems
+Missing labels on forms
+Missing button types
+Incorrect HTTP status codes
+Tests depending on execution order
+Tests modifying production JSON data
+
+Requirements:
+
+Do not add unnecessary abstractions.
+Keep the project understandable for a student.
+Do not change endpoint names.
+Do not remove working tests.
+Run all tests after refactoring.
+Run frontend build.
+Append this prompt to PROMPTS.md.
+
+Show a summary of every meaningful refactor.
+
+Show the commit command:
+
+refactor: improve code quality and maintainability
+
+Simplified duplicated logic, improved naming and strengthened error handling with AI-assisted review.
+https://github.com/JEEL18993/car-delaership-project
+```
+
+
 
 
 

@@ -12,13 +12,13 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
+    <header className="navbar" role="banner">
       <div className="navbar-container">
-        <Link to="/" className="navbar-brand">
+        <Link to="/" className="navbar-brand" aria-label="DriveSelect Home Page">
           🚘 Drive<span>Select</span>
         </Link>
 
-        <div className="navbar-links">
+        <nav className="navbar-links" aria-label="Main Navigation">
           <NavLink to="/" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
             Inventory
           </NavLink>
@@ -34,7 +34,13 @@ const Navbar = () => {
               <span className="user-badge">
                 👤 {user?.name} {user?.role === 'admin' ? '(Admin)' : ''}
               </span>
-              <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="btn btn-secondary"
+                style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                aria-label="Logout of account"
+              >
                 Logout
               </button>
             </>
@@ -48,9 +54,9 @@ const Navbar = () => {
               </Link>
             </>
           )}
-        </div>
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 };
 

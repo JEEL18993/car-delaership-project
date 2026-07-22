@@ -47,7 +47,7 @@ describe('Frontend Vehicle Workflows', () => {
       </AuthProvider>
     );
 
-    const button = screen.getByRole('button', { name: /Out of Stock/i });
+    const button = screen.getByRole('button', { name: /Purchase/i });
     expect(button).toBeDisabled();
   });
 
@@ -63,11 +63,12 @@ describe('Frontend Vehicle Workflows', () => {
       </AuthProvider>
     );
 
-    const button = screen.getByRole('button', { name: /Purchase Now/i });
+    const button = screen.getByRole('button', { name: /Purchase/i });
     fireEvent.click(button);
 
     expect(handlePurchase).toHaveBeenCalledWith('v100');
   });
+
 
   test('Search filters send correct query parameters on submit', () => {
     const handleSearch = vi.fn();

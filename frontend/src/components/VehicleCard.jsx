@@ -8,7 +8,7 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete, onRestock, purchas
   const defaultImage = 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80';
 
   return (
-    <div className="vehicle-card">
+    <article className="vehicle-card">
       <div className="vehicle-image-container">
         <img
           src={vehicle.image || defaultImage}
@@ -44,33 +44,41 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete, onRestock, purchas
           {isAdmin ? (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.4rem', width: '100%' }}>
               <button
+                type="button"
                 onClick={() => onEdit(vehicle)}
                 className="btn btn-secondary"
                 style={{ padding: '0.4rem', fontSize: '0.8rem' }}
+                aria-label={`Edit ${vehicle.make} ${vehicle.model}`}
               >
                 ✏️ Edit
               </button>
               <button
+                type="button"
                 onClick={() => onRestock(vehicle)}
                 className="btn btn-success"
                 style={{ padding: '0.4rem', fontSize: '0.8rem' }}
+                aria-label={`Restock ${vehicle.make} ${vehicle.model}`}
               >
                 📦 Restock
               </button>
               <button
+                type="button"
                 onClick={() => onDelete(vehicle)}
                 className="btn btn-danger"
                 style={{ padding: '0.4rem', fontSize: '0.8rem' }}
+                aria-label={`Delete ${vehicle.make} ${vehicle.model}`}
               >
                 🗑️ Delete
               </button>
             </div>
           ) : (
             <button
+              type="button"
               onClick={() => onPurchase(vehicle.id)}
               disabled={isOutOfStock || purchasingId === vehicle.id || !isAuthenticated}
               className="btn btn-primary"
               style={{ width: '100%' }}
+              aria-label={`Purchase ${vehicle.make} ${vehicle.model}`}
             >
               {!isAuthenticated
                 ? 'Login to Purchase'
@@ -83,7 +91,7 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete, onRestock, purchas
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
