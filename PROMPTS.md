@@ -505,6 +505,66 @@ feat: create React frontend foundation
 Created the React application, routing, authentication context and responsive CSS foundation with AI assistance.
 ```
 
+## Prompt 9 - Frontend Workflows (TDD)
+
+```text
+Use TDD to complete the main frontend behaviour.
+
+First create failing frontend tests for:
+
+Authentication:
+
+Register form validates required fields.
+Login form validates required fields.
+Successful login stores authentication data.
+Logout clears authentication data.
+
+Vehicles:
+
+Vehicle card displays vehicle information.
+Purchase button is disabled when quantity is zero.
+Clicking Purchase calls the purchase API.
+Search filters send correct query parameters.
+Empty state appears when no vehicles are available.
+
+Admin:
+
+Normal users cannot access the admin page.
+Admin can open the add vehicle form.
+Admin can submit a valid vehicle.
+Delete requires confirmation.
+Restock requires a valid positive amount.
+
+Then implement the minimum frontend functionality required to pass the tests.
+
+Requirements:
+
+Mock Axios requests in component tests.
+Do not call the real backend during frontend tests.
+Avoid testing implementation details.
+Test visible user behaviour.
+Keep components simple and reusable.
+Append this prompt to PROMPTS.md.
+
+Run:
+
+npm test
+npm run build
+
+Show separate Red and Green commit commands:
+
+test: define frontend user behaviour
+
+Added failing UI tests for authentication, vehicle browsing, purchasing and admin operations with AI assistance.
+
+Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
+
+feat: implement frontend inventory workflows
+
+Implemented the tested React authentication, vehicle and admin workflows after frontend tests passed.
+```
+
+
 
 
 
