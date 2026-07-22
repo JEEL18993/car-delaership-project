@@ -564,6 +564,60 @@ feat: implement frontend inventory workflows
 Implemented the tested React authentication, vehicle and admin workflows after frontend tests passed.
 ```
 
+## Prompt 10 - Full-stack Integration & Verification
+
+```text
+Connect the completed React frontend with the Express backend.
+
+Requirements:
+
+Configure backend CORS using FRONTEND_URL.
+Add FRONTEND_URL to backend/.env.example.
+Use VITE_API_URL in the frontend.
+Do not hardcode production URLs.
+Verify Axios sends JWT correctly.
+Handle expired or invalid tokens by logging out the user.
+Display backend validation errors clearly.
+Add a health endpoint:
+GET /api/health
+Add a frontend API utility for checking backend availability.
+Do not change existing API behaviour unnecessarily.
+
+Manually verify this complete flow:
+
+Register.
+Login.
+View vehicles.
+Search vehicles.
+Purchase an available vehicle.
+Confirm an out-of-stock vehicle cannot be purchased.
+Login as admin.
+Add a vehicle.
+Update a vehicle.
+Restock a vehicle.
+Delete a vehicle.
+Logout.
+
+Run:
+
+Backend tests
+Backend coverage
+Frontend tests
+Frontend production build
+
+Append this prompt to PROMPTS.md.
+
+Show the commit command:
+
+feat: connect React frontend with Express API
+
+Integrated the frontend and backend, handled authentication errors and verified complete application workflows with AI assistance.
+
+Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
+https://github.com/JEEL18993/car-delaership-project
+```
+
+
 
 
 
