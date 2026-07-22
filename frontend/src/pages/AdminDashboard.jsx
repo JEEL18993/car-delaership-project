@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { vehicleApi } from '../api/vehicleApi';
 import { useToast } from '../context/ToastContext';
+import { formatPrice } from '../utils/formatters';
 import VehicleForm from '../components/VehicleForm';
 import ConfirmDialog from '../components/ConfirmDialog';
 import RestockModal from '../components/RestockModal';
@@ -24,7 +25,8 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       const data = await vehicleApi.getVehicles();
-      setVehicles(data);
+      const list = Array.isArray(data) ? data : (data?.data || []);
+      setVehicles(list);
     } catch (err) {
       showToast(err.response?.data?.message || 'Failed to load inventory', 'error');
     } finally {
@@ -36,14 +38,16 @@ const AdminDashboard = () => {
     fetchVehicles();
   }, []);
 
+  const vehicleListArray = Array.isArray(vehicles) ? vehicles : [];
+
   // Summary Metrics
-  const totalVehicles = vehicles.length;
-  const availableVehicles = vehicles.filter((v) => v.quantity > 0).length;
-  const outOfStockVehicles = vehicles.filter((v) => v.quantity === 0).length;
-  const totalInventoryUnits = vehicles.reduce((sum, v) => sum + Number(v.quantity || 0), 0);
+  const totalVehicles = vehicleListArray.length;
+  const availableVehicles = vehicleListArray.filter((v) => v.quantity > 0).length;
+  const outOfStockVehicles = vehicleListArray.filter((v) => v.quantity === 0).length;
+  const totalInventoryUnits = vehicleListArray.reduce((sum, v) => sum + Number(v.quantity || 0), 0);
 
   // Search Filter
-  const filteredVehicles = vehicles.filter((v) =>
+  const filteredVehicles = vehicleListArray.filter((v) =>
     `${v.make} ${v.model} ${v.category}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -63,11 +67,11 @@ const AdminDashboard = () => {
     try {
       if (editingVehicle) {
         const updated = await vehicleApi.updateVehicle(editingVehicle.id, formData);
-        setVehicles((prev) => prev.map((v) => (v.id === editingVehicle.id ? updated : v)));
+        setVehicles((prev) => (Array.isArray(prev) ? prev : []).map((v) => (v.id === editingVehicle.id ? updated : v)));
         showToast(`Vehicle ${updated.make} ${updated.model} updated successfully!`, 'success');
       } else {
         const created = await vehicleApi.createVehicle(formData);
-        setVehicles((prev) => [created, ...prev]);
+        setVehicles((prev) => [created, ...(Array.isArray(prev) ? prev : [])]);
         showToast(`Vehicle ${created.make} ${created.model} created successfully!`, 'success');
       }
       setIsFormOpen(false);
@@ -84,7 +88,7 @@ const AdminDashboard = () => {
     setIsSubmitting(true);
     try {
       await vehicleApi.deleteVehicle(deletingVehicle.id);
-      setVehicles((prev) => prev.filter((v) => v.id !== deletingVehicle.id));
+      setVehicles((prev) => (Array.isArray(prev) ? prev : []).filter((v) => v.id !== deletingVehicle.id));
       showToast(`Vehicle ${deletingVehicle.make} ${deletingVehicle.model} deleted`, 'info');
       setDeletingVehicle(null);
     } catch (err) {
@@ -99,7 +103,7 @@ const AdminDashboard = () => {
     setIsSubmitting(true);
     try {
       const updated = await vehicleApi.restockVehicle(id, amount);
-      setVehicles((prev) => prev.map((v) => (v.id === id ? updated : v)));
+      setVehicles((prev) => (Array.isArray(prev) ? prev : []).map((v) => (v.id === id ? updated : v)));
       showToast(`Restocked ${amount} units for ${updated.make} ${updated.model}!`, 'success');
       setRestockingVehicle(null);
     } catch (err) {
@@ -176,7 +180,7 @@ const AdminDashboard = () => {
               <tr>
                 <th>Vehicle</th>
                 <th>Category</th>
-                <th>Price ($)</th>
+                <th>Price (INR)</th>
                 <th>Quantity</th>
                 <th>Status</th>
                 <th style={{ textAlign: 'right' }}>Actions</th>
@@ -196,7 +200,7 @@ const AdminDashboard = () => {
                       <strong>{vehicle.year ? `${vehicle.year} ` : ''}{vehicle.make} {vehicle.model}</strong>
                     </td>
                     <td>{vehicle.category}</td>
-                    <td>${Number(vehicle.price).toLocaleString()}</td>
+                    <td>{formatPrice(vehicle.price)}</td>
                     <td>{vehicle.quantity}</td>
                     <td>
                       <span className={`badge ${vehicle.quantity === 0 ? 'badge-out-of-stock' : 'badge-in-stock'}`}>

@@ -22,7 +22,8 @@ const Home = () => {
     setLoading(true);
     try {
       const data = await vehicleApi.getVehicles();
-      setVehicles(data);
+      const list = Array.isArray(data) ? data : (data?.data || []);
+      setVehicles(list);
     } catch (err) {
       if (err.response?.status === 401) {
         setVehicles([]);
@@ -60,7 +61,7 @@ const Home = () => {
     setPurchasingId(id);
     try {
       const updatedVehicle = await vehicleApi.purchaseVehicle(id);
-      setVehicles((prev) => prev.map((v) => (v.id === id ? updatedVehicle : v)));
+      setVehicles((prev) => (Array.isArray(prev) ? prev : []).map((v) => (v.id === id ? updatedVehicle : v)));
       showToast(`Successfully purchased ${updatedVehicle.make} ${updatedVehicle.model}!`, 'success');
     } catch (err) {
       showToast(err.response?.data?.message || 'Purchase failed', 'error');
@@ -68,6 +69,8 @@ const Home = () => {
       setPurchasingId(null);
     }
   };
+
+  const vehicleListArray = Array.isArray(vehicles) ? vehicles : [];
 
   return (
     <div>
@@ -109,7 +112,7 @@ const Home = () => {
         )}
 
         <VehicleList
-          vehicles={vehicles.slice(0, 6)}
+          vehicles={vehicleListArray.slice(0, 6)}
           loading={loading}
           onPurchase={handlePurchase}
           purchasingId={purchasingId}

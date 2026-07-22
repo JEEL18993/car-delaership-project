@@ -36,7 +36,8 @@ const BrowseCars = () => {
       } else {
         data = await vehicleApi.getVehicles();
       }
-      setVehicles(data);
+      const list = Array.isArray(data) ? data : (data?.data || []);
+      setVehicles(list);
     } catch (err) {
       if (err.response?.status === 401) {
         setVehicles([]);
@@ -82,7 +83,7 @@ const BrowseCars = () => {
     setPurchasingId(id);
     try {
       const updatedVehicle = await vehicleApi.purchaseVehicle(id);
-      setVehicles((prev) => prev.map((v) => (v.id === id ? updatedVehicle : v)));
+      setVehicles((prev) => (Array.isArray(prev) ? prev : []).map((v) => (v.id === id ? updatedVehicle : v)));
       showToast(`Successfully purchased ${updatedVehicle.make} ${updatedVehicle.model}!`, 'success');
     } catch (err) {
       showToast(err.response?.data?.message || 'Purchase failed', 'error');
@@ -91,8 +92,10 @@ const BrowseCars = () => {
     }
   };
 
+  const vehicleListArray = Array.isArray(vehicles) ? vehicles : [];
+
   // Sort logic
-  const sortedVehicles = [...vehicles].sort((a, b) => {
+  const sortedVehicles = [...vehicleListArray].sort((a, b) => {
     if (sortBy === 'price-asc') return a.price - b.price;
     if (sortBy === 'price-desc') return b.price - a.price;
     if (sortBy === 'name-asc') return `${a.make} ${a.model}`.localeCompare(`${b.make} ${b.model}`);
