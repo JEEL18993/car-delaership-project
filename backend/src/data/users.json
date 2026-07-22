@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "fee56a25-32c0-49de-9826-43dbf8acc5b4",
+    "name": "System Admin",
+    "email": "admin@dealership.com",
+    "password": "$2a$10$nen00GCqtLNBZce0a6.KvurtvtD3fnzJbq2OuTDiSlabMFJQEoWdG",
+    "role": "admin",
+    "createdAt": "2026-07-22T17:16:38.923Z"
+  }
+]
