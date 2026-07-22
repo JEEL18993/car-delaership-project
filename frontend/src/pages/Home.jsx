@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import HeroSearch from '../components/HeroSearch';
 import PopularBrands from '../components/PopularBrands';
 import VehicleList from '../components/VehicleList';
 import WhyChooseUs from '../components/WhyChooseUs';
 import StatsSection from '../components/StatsSection';
 import { vehicleApi } from '../api/vehicleApi';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const { showToast } = useToast();
 
   const [vehicles, setVehicles] = useState([]);
@@ -22,15 +24,23 @@ const Home = () => {
       const data = await vehicleApi.getVehicles();
       setVehicles(data);
     } catch (err) {
-      showToast('Failed to load inventory', 'error');
+      if (err.response?.status === 401) {
+        setVehicles([]);
+      } else {
+        showToast('Failed to load inventory', 'error');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchVehicles();
-  }, []);
+    if (isAuthenticated) {
+      fetchVehicles();
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
 
   const handleHeroSearch = (filters) => {
     const params = new URLSearchParams();
@@ -80,6 +90,23 @@ const Home = () => {
             View All Cars →
           </button>
         </div>
+
+        {!isAuthenticated && (
+          <div style={{ backgroundColor: 'var(--accent-red-light)', color: '#991b1b', padding: '1.25rem 1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <strong style={{ fontSize: '1.05rem', display: 'block' }}>🔒 Guest Visitor Notice</strong>
+              <span style={{ fontSize: '0.9rem' }}>Please log in to your AutoDrive account to view protected vehicle pricing and purchase cars online.</span>
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <Link to="/login" className="btn btn-primary" style={{ padding: '0.5rem 1.2rem', fontSize: '0.88rem' }}>
+                Sign In Now
+              </Link>
+              <Link to="/register" className="btn btn-secondary" style={{ padding: '0.5rem 1.2rem', fontSize: '0.88rem' }}>
+                Register Free
+              </Link>
+            </div>
+          </div>
+        )}
 
         <VehicleList
           vehicles={vehicles.slice(0, 6)}

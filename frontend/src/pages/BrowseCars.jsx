@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { vehicleApi } from '../api/vehicleApi';
 import VehicleList from '../components/VehicleList';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
 const BrowseCars = () => {
   const [searchParams] = useSearchParams();
+  const { isAuthenticated } = useAuth();
   const { showToast } = useToast();
 
   const [vehicles, setVehicles] = useState([]);
@@ -36,7 +38,11 @@ const BrowseCars = () => {
       }
       setVehicles(data);
     } catch (err) {
-      showToast(err.response?.data?.message || 'Failed to load vehicle catalog', 'error');
+      if (err.response?.status === 401) {
+        setVehicles([]);
+      } else {
+        showToast(err.response?.data?.message || 'Failed to load vehicle catalog', 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -45,12 +51,18 @@ const BrowseCars = () => {
   useEffect(() => {
     const initialMake = searchParams.get('make') || '';
     setMake(initialMake);
-    fetchVehicles(initialMake ? { make: initialMake } : {});
-  }, [searchParams]);
+    if (isAuthenticated) {
+      fetchVehicles(initialMake ? { make: initialMake } : {});
+    } else {
+      setLoading(false);
+    }
+  }, [searchParams, isAuthenticated]);
 
   const handleFilterSubmit = (e) => {
     e.preventDefault();
-    fetchVehicles({ make, model, category, fuelType, transmission, location, featured, minPrice, maxPrice });
+    if (isAuthenticated) {
+      fetchVehicles({ make, model, category, fuelType, transmission, location, featured, minPrice, maxPrice });
+    }
   };
 
   const handleResetFilters = () => {
@@ -63,7 +75,7 @@ const BrowseCars = () => {
     setFeatured('');
     setMinPrice('');
     setMaxPrice('');
-    fetchVehicles({});
+    if (isAuthenticated) fetchVehicles({});
   };
 
   const handlePurchase = async (id) => {
@@ -94,6 +106,23 @@ const BrowseCars = () => {
         <h1 className="section-title">Browse Vehicle Catalog</h1>
         <p className="section-subtitle">Explore and filter verified cars from top manufacturers</p>
       </div>
+
+      {!isAuthenticated && (
+        <div style={{ backgroundColor: 'var(--accent-red-light)', color: '#991b1b', padding: '1.25rem 1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <strong style={{ fontSize: '1.05rem', display: 'block' }}>🔒 Guest Visitor Notice</strong>
+            <span style={{ fontSize: '0.9rem' }}>Please log in to your AutoDrive account to view protected vehicle pricing and purchase cars online.</span>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <Link to="/login" className="btn btn-primary" style={{ padding: '0.5rem 1.2rem', fontSize: '0.88rem' }}>
+              Sign In Now
+            </Link>
+            <Link to="/register" className="btn btn-secondary" style={{ padding: '0.5rem 1.2rem', fontSize: '0.88rem' }}>
+              Register Free
+            </Link>
+          </div>
+        </div>
+      )}
 
       <div className="browse-layout">
         {/* Desktop Filter Sidebar */}

@@ -38,6 +38,11 @@ const Login = () => {
     }
   };
 
+  const handleQuickFillAdmin = () => {
+    setEmail('admin@example.com');
+    setPassword('AdminPassword123!');
+  };
+
   return (
     <div className="auth-split-wrapper">
       <div className="auth-visual-side">
@@ -54,7 +59,7 @@ const Login = () => {
           <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '0.5rem' }}>
             Account Sign In
           </h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
             Enter your email and password to access AutoDrive
           </p>
 
@@ -106,7 +111,21 @@ const Login = () => {
             </button>
           </form>
 
-          <p style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+          <div style={{ marginTop: '1.5rem', padding: '0.85rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>
+              Need an admin account to test inventory management?
+            </span>
+            <button
+              type="button"
+              onClick={handleQuickFillAdmin}
+              className="btn btn-secondary"
+              style={{ fontSize: '0.8rem', padding: '0.35rem 0.75rem' }}
+            >
+              ⚡ Fill Admin Credentials
+            </button>
+          </div>
+
+          <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
             Don't have an account?{' '}
             <Link to="/register" style={{ color: 'var(--accent-red)', fontWeight: 700 }}>
               Register Here
