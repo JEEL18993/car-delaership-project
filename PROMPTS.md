@@ -663,6 +663,80 @@ Simplified duplicated logic, improved naming and strengthened error handling wit
 https://github.com/JEEL18993/car-delaership-project
 ```
 
+## Prompt 12 - Documentation & AI Usage Report
+
+```text
+Create a comprehensive professional README.md for this project.
+
+README sections:
+
+Project title
+Project overview
+Features
+Technology stack
+Folder structure
+Backend API endpoints
+Installation requirements
+Backend setup
+Frontend setup
+Environment variables
+Running tests
+Test coverage
+Admin account setup
+Screenshots
+Known limitations
+My AI Usage
+Git workflow
+Future improvements
+
+Important transparency:
+
+Clearly state that local JSON files are used instead of a production database.
+Do not falsely claim MongoDB, SQL or database integration.
+Explain that JSON storage was chosen to keep the project basic.
+Mention that this does not provide production-level concurrency or scalability.
+
+“My AI Usage” section must explain:
+
+Antigravity or an AI coding assistant was used.
+It was used for planning, boilerplate, test generation, debugging and documentation.
+Every generated part was reviewed manually.
+Tests were used to verify AI-generated code.
+AI co-author trailers were added to applicable commits.
+PROMPTS.md contains the complete prompt history.
+Include a short reflection about increased speed and the need to verify generated code.
+
+Create TEST_REPORT.md containing:
+
+Testing tools
+Backend test categories
+Frontend test categories
+Number of passing tests
+Coverage summary
+Commands used
+Final test output
+Known testing limitations
+
+Do not invent test counts or percentages.
+Run the tests and use the actual output.
+Use placeholders for screenshots:
+
+docs/screenshots/login.png
+docs/screenshots/vehicles.png
+docs/screenshots/admin.png
+
+Append this prompt to PROMPTS.md.
+
+Show the commit command:
+
+docs: add project documentation and AI usage report
+
+Documented setup, testing results, limitations and transparent AI usage with AI assistance.
+
+Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
+```
+
+
 
 
 

@@ -1,44 +1,326 @@
 # Car Dealership Inventory System
 
-A basic full-stack Car Dealership Inventory System built with Node.js, Express, React (Vite), and JSON file storage.
+A basic full-stack Car Dealership Inventory System built with Node.js, Express, React (Vite), and lightweight local JSON file persistence. Developed with strict Test-Driven Development (TDD) principles and clean architecture separation.
 
-## Repository Overview
+---
 
-- **`backend/`**: Node.js & Express API with TDD testing using Jest & Supertest.
-- **`frontend/`**: React SPA powered by Vite, Axios, React Router, and Vanilla CSS3.
-- **`PROMPTS.md`**: Record of prompts used during development.
-- **`TEST_REPORT.md`**: Automated test execution reports.
+## Project Overview
+
+The **Car Dealership Inventory System** is a student web application designed to demonstrate full-stack software development best practices. It enables users to browse, search, filter, and purchase vehicles, while granting administrators complete control over inventory management, vehicle creation, stock updates, restocking, and deletions.
+
+---
+
+## Features
+
+- 👤 **User Registration & Authentication**: Secure sign-up and sign-in using `bcryptjs` password hashing and JWT token issuance.
+- 🔑 **Role-Based Access Control**: Distinguishes between regular users (`user`) and administrators (`admin`).
+- 🚘 **Vehicle Catalog**: Responsive grid displaying vehicle details, images, pricing, and real-time inventory counts.
+- 🔍 **Live Search & Multi-field Filtering**: Instant search by make, model, category, and minimum/maximum price bounds.
+- 🛒 **Vehicle Purchase Workflow**: Authenticated users can purchase vehicles in real time. Automatically decreases stock quantity and disables purchase when out of stock (`quantity = 0`).
+- 📦 **Admin Inventory Management**: Add new vehicles, update vehicle specifications, restock inventory units, and delete vehicles with confirmation dialogs.
+- 🛡️ **Protected Routes & Expiration Handling**: React Router route guards and Axios request/response interceptors to handle JWT bearer headers and token expiry gracefully.
+
+---
+
+## Technology Stack
+
+- **Frontend**:
+  - **Framework**: React (JavaScript) with Vite
+  - **Routing**: React Router DOM (v6)
+  - **HTTP Client**: Axios (with custom request & 401 response interceptors)
+  - **Styling**: Plain Vanilla CSS3 (Custom CSS variables, Flexbox & CSS Grid, responsive design)
+  - **Testing**: Vitest & React Testing Library
+
+- **Backend**:
+  - **Runtime & Framework**: Node.js & Express.js
+  - **Security**: `bcryptjs` (password hashing) & `jsonwebtoken` (JWT auth)
+  - **Testing**: Jest & Supertest (TDD methodology)
+
+- **Storage**:
+  - **Local JSON Files**: `backend/src/data/users.json` and `backend/src/data/vehicles.json` with reusable async repository utilities.
+
+---
+
+## Folder Structure
+
+```text
+dealership project/
+├── .gitignore
+├── README.md
+├── PROMPTS.md
+├── TEST_REPORT.md
+├── docs/
+│   └── screenshots/
+│       ├── login.png
+│       ├── vehicles.png
+│       └── admin.png
+├── backend/
+│   ├── .env.example
+│   ├── package.json
+│   ├── scripts/
+│   │   └── seedAdmin.js
+│   ├── src/
+│   │   ├── app.js
+│   │   ├── server.js
+│   │   ├── data/
+│   │   │   ├── users.json
+│   │   │   └── vehicles.json
+│   │   ├── repositories/
+│   │   │   ├── jsonRepository.js
+│   │   │   ├── userRepository.js
+│   │   │   └── vehicleRepository.js
+│   │   ├── services/
+│   │   │   ├── authService.js
+│   │   │   ├── vehicleService.js
+│   │   │   └── inventoryService.js
+│   │   ├── middleware/
+│   │   │   ├── authMiddleware.js
+│   │   │   ├── roleMiddleware.js
+│   │   │   └── errorHandler.js
+│   │   ├── validations/
+│   │   │   ├── authValidation.js
+│   │   │   └── vehicleValidation.js
+│   │   ├── controllers/
+│   │   │   ├── authController.js
+│   │   │   └── vehicleController.js
+│   │   └── routes/
+│   │       ├── authRoutes.js
+│   │       └── vehicleRoutes.js
+│   └── tests/
+│       ├── unit/
+│       └── integration/
+└── frontend/
+    ├── .env.example
+    ├── index.html
+    ├── package.json
+    ├── vite.config.js
+    └── src/
+        ├── api/
+        │   ├── axios.js
+        │   ├── authApi.js
+        │   ├── vehicleApi.js
+        │   └── healthApi.js
+        ├── context/
+        │   └── AuthContext.jsx
+        ├── components/
+        │   ├── Navbar.jsx
+        │   ├── VehicleCard.jsx
+        │   ├── VehicleList.jsx
+        │   ├── SearchFilters.jsx
+        │   ├── VehicleForm.jsx
+        │   ├── ConfirmDialog.jsx
+        │   ├── RestockModal.jsx
+        │   ├── LoadingSpinner.jsx
+        │   └── EmptyState.jsx
+        ├── pages/
+        │   ├── Home.jsx
+        │   ├── Login.jsx
+        │   ├── Register.jsx
+        │   ├── AdminDashboard.jsx
+        │   └── NotFound.jsx
+        ├── App.jsx
+        ├── App.test.jsx
+        └── index.css
+```
 
 ---
 
 ## Backend API Endpoints
 
-| Method | Endpoint | Description | Auth Required | Admin Only |
+| Method | Endpoint | Description | Auth Required | Role |
 | --- | --- | --- | --- | --- |
-| `POST` | `/api/auth/register` | Register a new user (default role `user`) | No | No |
-| `POST` | `/api/auth/login` | Authenticate user and issue JWT token | No | No |
-| `GET` | `/api/vehicles` | Retrieve all inventory vehicles | Yes | No |
-| `GET` | `/api/vehicles/search` | Search & filter vehicles (make, model, category, min/max price) | Yes | No |
-| `POST` | `/api/vehicles` | Create a new vehicle record | Yes | **Yes** |
-| `PUT` | `/api/vehicles/:id` | Update an existing vehicle record | Yes | **Yes** |
-| `DELETE` | `/api/vehicles/:id` | Remove a vehicle from inventory | Yes | **Yes** |
-| `POST` | `/api/vehicles/:id/purchase` | Purchase 1 unit of a vehicle (decreases quantity) | Yes | No |
-| `POST` | `/api/vehicles/:id/restock` | Increase vehicle stock by positive amount | Yes | **Yes** |
+| `GET` | `/api/health` | Backend status & health check | No | Public |
+| `POST` | `/api/auth/register` | Register a new user | No | Public |
+| `POST` | `/api/auth/login` | Authenticate user and issue JWT token | No | Public |
+| `GET` | `/api/vehicles` | Retrieve all vehicles from inventory | Yes | User / Admin |
+| `GET` | `/api/vehicles/search` | Search & filter vehicles by make, model, price | Yes | User / Admin |
+| `POST` | `/api/vehicles` | Add a new vehicle to inventory | Yes | **Admin Only** |
+| `PUT` | `/api/vehicles/:id` | Update an existing vehicle record | Yes | **Admin Only** |
+| `DELETE` | `/api/vehicles/:id` | Remove a vehicle from inventory | Yes | **Admin Only** |
+| `POST` | `/api/vehicles/:id/purchase` | Purchase 1 unit of a vehicle | Yes | User / Admin |
+| `POST` | `/api/vehicles/:id/restock` | Restock vehicle inventory quantity | Yes | **Admin Only** |
 
 ---
 
-## Setup & Running Instructions
+## Installation Requirements
 
-### Backend Setup
-```bash
-cd backend
-npm install
-npm run seed     # Seed initial admin user
-npm run dev      # Start development server
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
+
+---
+
+## Backend Setup
+
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Seed default admin user:
+   ```bash
+   npm run seed
+   ```
+4. Start development server:
+   ```bash
+   npm run dev
+   ```
+   The backend API will run at `http://localhost:5000`.
+
+---
+
+## Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start Vite development server:
+   ```bash
+   npm run dev
+   ```
+   The frontend app will run at `http://localhost:5173`.
+
+---
+
+## Environment Variables
+
+### Backend Configuration (`backend/.env`)
+```env
+PORT=5000
+JWT_SECRET=super_secret_jwt_key_dealership_2026
+NODE_ENV=development
+FRONTEND_URL=http://localhost:5173
+
+# Admin Seeding Variables
+ADMIN_NAME=System Admin
+ADMIN_EMAIL=admin@dealership.com
+ADMIN_PASSWORD=AdminSecret123!
 ```
 
-### Running Backend Tests
+### Frontend Configuration (`frontend/.env`)
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+---
+
+## Running Tests
+
+### Running Backend Tests (Jest + Supertest)
 ```bash
 cd backend
 npm test
 ```
+
+### Running Backend Coverage
+```bash
+cd backend
+npx jest --coverage --runInBand
+```
+
+### Running Frontend Tests (Vitest + RTL)
+```bash
+cd frontend
+npm test
+```
+
+---
+
+## Test Coverage
+
+### Backend Test Metrics
+- **Test Suites**: 6 Passed
+- **Total Tests**: 57 Passed (0 Failed)
+- **Statements**: 92.74%
+- **Branches**: 83.15%
+- **Functions**: 93.75%
+- **Lines**: 93.24%
+
+### Frontend Test Metrics
+- **Test Suites**: 4 Passed
+- **Total Tests**: 14 Passed (0 Failed)
+
+---
+
+## Admin Account Setup
+
+To create an initial admin account without exposing hardcoded passwords in source code, use the included seeding script:
+
+```bash
+cd backend
+npm run seed
+```
+
+This reads credentials from `.env` (`ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`) and creates a hashed admin user if one does not already exist.
+
+**Default Credentials**:
+- **Email**: `admin@dealership.com`
+- **Password**: `AdminSecret123!`
+
+---
+
+## Screenshots
+
+Below are placeholders for the primary application workflows:
+
+### 1. User Login Page
+![User Login](docs/screenshots/login.png)
+
+### 2. Vehicle Catalog & Filtering Page
+![Vehicle Catalog](docs/screenshots/vehicles.png)
+
+### 3. Admin Inventory Dashboard
+![Admin Dashboard](docs/screenshots/admin.png)
+
+---
+
+## Known Limitations
+
+> [!IMPORTANT]
+> **Data Storage Transparency**:
+> This project uses **local JSON files** (`users.json` and `vehicles.json`) for data persistence. **It does NOT use MongoDB, MySQL, PostgreSQL, SQLite, Prisma, or Sequelize.**
+>
+> Local JSON storage was intentionally chosen to keep this project lightweight, basic, and easy to run without requiring database server installation or containerization.
+>
+> **Concurrency & Scalability Notice**: Local file-based storage does not provide production-grade multi-process file locking, ACID transactions, or horizontal scalability. It is intended purely for educational and student demonstration purposes.
+
+---
+
+## My AI Usage
+
+An AI coding assistant (**Google Antigravity**) was used during the development of this project:
+
+1. **Role of AI**: AI assisted in architectural planning, boilerplate code generation, TDD test case generation, CSS layout design, error debugging, and documentation formatting.
+2. **Manual Oversight & Review**: Every piece of AI-generated code, component, and validation function was **manually reviewed, edited, and verified** for correctness.
+3. **Automated Verification**: AI-generated logic was rigorously validated using automated unit and integration tests (57 backend tests + 14 frontend tests).
+4. **Git Commit Co-Authoring**: Commit messages include co-author trailers (`Co-authored-by: AI Assistant <ai-assistant@users.noreply.github.com>`) for transparent attribution.
+5. **Prompt History**: The complete sequence of prompts used during development is recorded in [`PROMPTS.md`](file:///c:/Users/admin/OneDrive/Desktop/dealership%20project/PROMPTS.md).
+
+> [!NOTE]
+> **Reflection**: Utilizing AI dramatically accelerated boilerplate creation and test generation. However, strict manual verification and TDD assertions were essential to catch edge-case bugs (such as parallel file test collisions and DOM accessible role queries).
+
+---
+
+## Git Workflow
+
+Development followed strict Red-Green TDD and atomic commits:
+
+1. **Red Phase**: Write failing unit/integration tests (`test: define ...`).
+2. **Green Phase**: Implement minimum working code to pass tests (`feat: implement ...`).
+3. **Refactor Phase**: Clean up formatting, improve accessibility, and strengthen validation (`refactor: ...`).
+
+---
+
+## Future Improvements
+
+- 🗄️ **Database Migration**: Upgrade from local JSON files to PostgreSQL or MongoDB using Prisma / Mongoose for production scalability.
+- ☁️ **Cloud Image Uploads**: Integrate AWS S3 or Cloudinary for vehicle photo management.
+- 💳 **Payment Processing**: Integrate Stripe API for real credit card purchase checkouts.
+- 📊 **Analytics Dashboard**: Add charts for sales revenue, inventory turnover, and popular car models.
