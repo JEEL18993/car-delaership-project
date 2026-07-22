@@ -17,6 +17,10 @@ const BrowseCars = () => {
   const [make, setMake] = useState(searchParams.get('make') || '');
   const [model, setModel] = useState('');
   const [category, setCategory] = useState('');
+  const [fuelType, setFuelType] = useState('');
+  const [transmission, setTransmission] = useState('');
+  const [location, setLocation] = useState('');
+  const [featured, setFeatured] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
@@ -46,13 +50,17 @@ const BrowseCars = () => {
 
   const handleFilterSubmit = (e) => {
     e.preventDefault();
-    fetchVehicles({ make, model, category, minPrice, maxPrice });
+    fetchVehicles({ make, model, category, fuelType, transmission, location, featured, minPrice, maxPrice });
   };
 
   const handleResetFilters = () => {
     setMake('');
     setModel('');
     setCategory('');
+    setFuelType('');
+    setTransmission('');
+    setLocation('');
+    setFeatured('');
     setMinPrice('');
     setMaxPrice('');
     fetchVehicles({});
@@ -96,24 +104,24 @@ const BrowseCars = () => {
 
           <form onSubmit={handleFilterSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="form-group">
-              <label htmlFor="browse-make">Make</label>
+              <label htmlFor="browse-make">Make / Brand</label>
               <input
                 id="browse-make"
                 type="text"
                 className="form-control"
-                placeholder="e.g. Toyota"
+                placeholder="e.g. Maruti, Hyundai, Tata"
                 value={make}
                 onChange={(e) => setMake(e.target.value)}
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="browse-model">Model</label>
+              <label htmlFor="browse-model">Model Name</label>
               <input
                 id="browse-model"
                 type="text"
                 className="form-control"
-                placeholder="e.g. Camry"
+                placeholder="e.g. Creta, Swift, Nexon"
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
               />
@@ -128,16 +136,59 @@ const BrowseCars = () => {
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option value="">All Categories</option>
+                <option value="Hatchback">Hatchback</option>
                 <option value="Sedan">Sedan</option>
                 <option value="SUV">SUV</option>
-                <option value="Truck">Truck</option>
+                <option value="Compact SUV">Compact SUV</option>
+                <option value="MUV">MUV</option>
                 <option value="Electric">Electric</option>
-                <option value="Coupe">Coupe</option>
               </select>
             </div>
 
             <div className="form-group">
-              <label htmlFor="browse-minPrice">Min Price ($)</label>
+              <label htmlFor="browse-fuelType">Fuel Type</label>
+              <select
+                id="browse-fuelType"
+                className="form-control"
+                value={fuelType}
+                onChange={(e) => setFuelType(e.target.value)}
+              >
+                <option value="">All Fuel Types</option>
+                <option value="Petrol">Petrol</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="Electric">Electric</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="browse-transmission">Transmission</label>
+              <select
+                id="browse-transmission"
+                className="form-control"
+                value={transmission}
+                onChange={(e) => setTransmission(e.target.value)}
+              >
+                <option value="">All Transmissions</option>
+                <option value="Manual">Manual</option>
+                <option value="Automatic">Automatic</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="browse-location">City / Location</label>
+              <input
+                id="browse-location"
+                type="text"
+                className="form-control"
+                placeholder="e.g. Ahmedabad, Mumbai"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="browse-minPrice">Min Price (₹)</label>
               <input
                 id="browse-minPrice"
                 type="number"
@@ -149,12 +200,12 @@ const BrowseCars = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="browse-maxPrice">Max Price ($)</label>
+              <label htmlFor="browse-maxPrice">Max Price (₹)</label>
               <input
                 id="browse-maxPrice"
                 type="number"
                 className="form-control"
-                placeholder="100000"
+                placeholder="3000000"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
               />

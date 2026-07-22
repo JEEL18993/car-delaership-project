@@ -1,25 +1,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { formatPrice } from '../utils/formatters';
 
 const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete, onRestock, purchasingId }) => {
   const { isAuthenticated, isAdmin } = useAuth();
 
-  const isOutOfStock = vehicle.quantity === 0;
-  const defaultImage = 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80';
+  const isOutOfStock = Number(vehicle.quantity || 0) === 0;
+  const fallbackImage = '/images/car-placeholder.jpg';
 
   return (
     <article className="vehicle-card">
       <div className="vehicle-image-wrap">
         <img
-          src={vehicle.image || defaultImage}
+          src={vehicle.image || fallbackImage}
           alt={`${vehicle.make} ${vehicle.model}`}
           className="vehicle-image"
           onError={(e) => {
-            e.target.src = defaultImage;
+            e.currentTarget.src = fallbackImage;
           }}
         />
-        <div className="vehicle-badge-pos">
+        <div className="vehicle-badge-pos" style={{ display: 'flex', gap: '0.4rem' }}>
+          {vehicle.featured && <span className="badge" style={{ backgroundColor: '#f97316', color: '#fff' }}>Featured</span>}
+          {vehicle.condition && <span className="badge badge-category">{vehicle.condition}</span>}
           <span className={`badge ${isOutOfStock ? 'badge-out-of-stock' : 'badge-in-stock'}`}>
             {isOutOfStock ? 'Out of Stock' : `${vehicle.quantity} Left`}
           </span>
@@ -32,17 +35,24 @@ const VehicleCard = ({ vehicle, onPurchase, onEdit, onDelete, onRestock, purchas
             <h3 className="vehicle-card-title">
               {vehicle.year ? `${vehicle.year} ` : ''}{vehicle.make} {vehicle.model}
             </h3>
-            <span className="badge badge-category" style={{ marginTop: '0.3rem' }}>
-              {vehicle.category}
-            </span>
+            <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.3rem' }}>
+              <span className="badge badge-category">{vehicle.category}</span>
+              {vehicle.location && <span className="badge badge-category">📍 {vehicle.location}</span>}
+            </div>
           </div>
-          <div className="vehicle-price-tag">${Number(vehicle.price).toLocaleString()}</div>
+          <div className="vehicle-price-tag">{formatPrice(vehicle.price)}</div>
         </div>
 
+        {vehicle.shortDescription && (
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.5rem 0', lineHeight: 1.4 }}>
+            {vehicle.shortDescription}
+          </p>
+        )}
+
         <div className="vehicle-specs-list">
-          <span className="spec-pill">⛽ {vehicle.fuelType || 'Petrol/Hybrid'}</span>
-          <span className="spec-pill">⚙️ {vehicle.transmission || 'Automatic'}</span>
-          <span className="spec-pill">📦 Stock: {vehicle.quantity}</span>
+          <span className="spec-pill">⛽ {vehicle.fuelType || 'Petrol'}</span>
+          <span className="spec-pill">⚙️ {vehicle.transmission || 'Manual'}</span>
+          {vehicle.mileage && <span className="spec-pill">🛣️ {vehicle.mileage}</span>}
         </div>
 
         <div className="vehicle-card-actions">

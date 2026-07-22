@@ -2,7 +2,11 @@
  * Validates vehicle creation input payload.
  * Returns error string if invalid, or null if valid.
  */
-function validateCreateVehicleInput({ make, model, category, price, quantity } = {}) {
+function validateCreateVehicleInput(data = {}) {
+  const {
+    make, model, category, price, quantity, year, condition, features, images
+  } = data;
+
   if (!make || typeof make !== 'string' || !make.trim()) {
     return 'Make is required and must be a non-empty string';
   }
@@ -18,6 +22,28 @@ function validateCreateVehicleInput({ make, model, category, price, quantity } =
   if (quantity === undefined || quantity === null || typeof quantity !== 'number' || !Number.isInteger(quantity) || quantity < 0) {
     return 'Quantity must be a non-negative integer';
   }
+
+  const currentYear = new Date().getFullYear();
+  if (year !== undefined && year !== null) {
+    if (typeof year !== 'number' || year < 1990 || year > currentYear + 1) {
+      return `Year must be between 1990 and ${currentYear + 1}`;
+    }
+  }
+
+  if (condition !== undefined && condition !== null) {
+    if (condition !== 'New' && condition !== 'Used') {
+      return "Condition must be 'New' or 'Used'";
+    }
+  }
+
+  if (features !== undefined && features !== null && !Array.isArray(features)) {
+    return 'Features must be an array of strings';
+  }
+
+  if (images !== undefined && images !== null && !Array.isArray(images)) {
+    return 'Images must be an array of image URL strings';
+  }
+
   return null;
 }
 
@@ -25,7 +51,11 @@ function validateCreateVehicleInput({ make, model, category, price, quantity } =
  * Validates vehicle update input payload.
  * Returns error string if invalid, or null if valid.
  */
-function validateUpdateVehicleInput({ make, model, category, price, quantity } = {}) {
+function validateUpdateVehicleInput(data = {}) {
+  const {
+    make, model, category, price, quantity, year, condition, features, images
+  } = data;
+
   if (make !== undefined && (typeof make !== 'string' || !make.trim())) {
     return 'Make cannot be empty';
   }
@@ -41,6 +71,28 @@ function validateUpdateVehicleInput({ make, model, category, price, quantity } =
   if (quantity !== undefined && (typeof quantity !== 'number' || !Number.isInteger(quantity) || quantity < 0)) {
     return 'Quantity must be a non-negative integer';
   }
+
+  const currentYear = new Date().getFullYear();
+  if (year !== undefined && year !== null) {
+    if (typeof year !== 'number' || year < 1990 || year > currentYear + 1) {
+      return `Year must be between 1990 and ${currentYear + 1}`;
+    }
+  }
+
+  if (condition !== undefined && condition !== null) {
+    if (condition !== 'New' && condition !== 'Used') {
+      return "Condition must be 'New' or 'Used'";
+    }
+  }
+
+  if (features !== undefined && features !== null && !Array.isArray(features)) {
+    return 'Features must be an array of strings';
+  }
+
+  if (images !== undefined && images !== null && !Array.isArray(images)) {
+    return 'Images must be an array of image URL strings';
+  }
+
   return null;
 }
 

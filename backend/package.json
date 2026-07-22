@@ -10,7 +10,8 @@
     "test:watch": "jest --watch --runInBand",
     "test:coverage": "jest --coverage --runInBand",
     "seed": "node scripts/seedAdmin.js",
-    "seed:admin": "node scripts/seedAdmin.js"
+    "seed:admin": "node scripts/seedAdmin.js",
+    "seed:vehicles": "node scripts/seedVehicles.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

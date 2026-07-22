@@ -8,9 +8,13 @@ async function getAllVehicles() {
 }
 
 /**
- * Service to search and filter vehicles by make, model, category, and price range.
+ * Service to search and filter vehicles by make, model, category, price range, fuelType, transmission, location, and featured flag.
  */
-async function searchVehicles({ make, model, category, minPrice, maxPrice } = {}) {
+async function searchVehicles(params = {}) {
+  const {
+    make, model, category, minPrice, maxPrice, fuelType, transmission, location, featured
+  } = params;
+
   const vehicles = await vehicleRepository.getAllVehicles();
 
   return vehicles.filter((v) => {
@@ -22,6 +26,21 @@ async function searchVehicles({ make, model, category, minPrice, maxPrice } = {}
     }
     if (category && typeof category === 'string' && !v.category.toLowerCase().includes(category.toLowerCase().trim())) {
       return false;
+    }
+    if (fuelType && typeof fuelType === 'string' && v.fuelType && !v.fuelType.toLowerCase().includes(fuelType.toLowerCase().trim())) {
+      return false;
+    }
+    if (transmission && typeof transmission === 'string' && v.transmission && !v.transmission.toLowerCase().includes(transmission.toLowerCase().trim())) {
+      return false;
+    }
+    if (location && typeof location === 'string' && v.location && !v.location.toLowerCase().includes(location.toLowerCase().trim())) {
+      return false;
+    }
+    if (featured !== undefined && featured !== '') {
+      const isFeaturedBool = String(featured).toLowerCase() === 'true';
+      if (Boolean(v.featured) !== isFeaturedBool) {
+        return false;
+      }
     }
     if (minPrice !== undefined && minPrice !== '' && !isNaN(minPrice) && v.price < Number(minPrice)) {
       return false;

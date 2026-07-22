@@ -926,6 +926,29 @@ Upgraded the React interface with a responsive automotive marketplace layout, im
 Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
 ```
 
+## Prompt 16 - Realistic Indian Vehicle Marketplace Data
+
+```text
+Improve the existing Car Dealership Inventory System by adding realistic demo vehicle data similar to a real automotive marketplace.
+
+1. Expand vehicle data model with full specifications (mileage, engine, seating, color, location, images array, descriptions, features, condition, featured flag).
+2. Add 28+ realistic Indian vehicle listings across Maruti Suzuki, Hyundai, Tata, Mahindra, Honda, Toyota, Kia, Skoda.
+3. Add realistic numeric INR pricing and formatPrice utility (₹ Lakh / ₹ Crore).
+4. Add original vehicle descriptions, Unsplash vehicle photos, and local image fallback support.
+5. Create seed script: backend/scripts/seedVehicles.js (npm run seed:vehicles) with automatic backup creation.
+6. Expanded multi-field backend search (fuelType, transmission, location, featured).
+7. Update vehicle validation, test coverage, and documentation.
+
+Use this Git commit message:
+
+feat: add realistic vehicle marketplace data
+
+Added detailed Indian vehicle listings, images, descriptions, specifications, price formatting, search filters and safe vehicle seeding with AI assistance.
+
+Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
+```
+
+
 
 
 

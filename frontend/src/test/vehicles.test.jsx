@@ -25,7 +25,7 @@ describe('Frontend Marketplace Vehicle Workflows', () => {
     quantity: 0
   };
 
-  test('Vehicle card displays vehicle title, price, category badge, and details button', () => {
+  test('Vehicle card displays vehicle title, INR price, category badge, and details button', () => {
     render(
       <BrowserRouter>
         <AuthProvider>
@@ -38,7 +38,7 @@ describe('Frontend Marketplace Vehicle Workflows', () => {
 
     expect(screen.getByText(/Toyota Corolla/i)).toBeInTheDocument();
     expect(screen.getByText('Sedan')).toBeInTheDocument();
-    expect(screen.getByText('$22,000')).toBeInTheDocument();
+    expect(screen.getByText('₹22,000')).toBeInTheDocument();
     expect(screen.getByText('3 Left')).toBeInTheDocument();
     expect(screen.getByText(/View Details/i)).toBeInTheDocument();
   });

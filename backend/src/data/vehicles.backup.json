@@ -1,0 +1,18 @@
+[
+  {
+    "id": "v1",
+    "make": "Toyota",
+    "model": "Camry",
+    "category": "Sedan",
+    "price": 25000,
+    "quantity": 2
+  },
+  {
+    "id": "v2",
+    "make": "Tesla",
+    "model": "Model 3",
+    "category": "Electric",
+    "price": 35000,
+    "quantity": 0
+  }
+]
