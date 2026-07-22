@@ -377,6 +377,52 @@ Implemented stock validation, vehicle purchasing and admin restocking after test
 Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
 ```
 
+## Prompt 7 - Admin Seeding & Backend Verification
+
+```text
+Add a simple admin-seeding script.
+
+Requirements:
+
+Create backend/scripts/seedAdmin.js.
+Read ADMIN_NAME, ADMIN_EMAIL and ADMIN_PASSWORD from environment variables.
+Hash the password.
+Create an admin user only when that email does not already exist.
+Never hardcode a real password.
+Add the following npm script:
+"seed": "node scripts/seedAdmin.js"
+Update .env.example with:
+ADMIN_NAME
+ADMIN_EMAIL
+ADMIN_PASSWORD
+Add tests for the admin creation service where practical.
+Do not expose passwords in logs.
+Append this prompt to PROMPTS.md.
+
+Then verify:
+
+Registration
+Login
+Admin login
+Vehicle CRUD
+Search
+Purchase
+Restock
+Invalid token
+Forbidden admin operation
+
+Generate a short backend API table for README.md.
+
+Run all backend tests and ensure they pass.
+
+Show the commit command:
+
+feat: add admin seeding and backend verification
+
+Added a safe admin seeding workflow and verified the complete backend API with AI assistance.
+```
+
+
 
 
 
