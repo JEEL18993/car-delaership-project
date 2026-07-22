@@ -30,7 +30,12 @@ const Login = () => {
         navigate('/');
       }
     } catch (err) {
-      const msg = err.response?.data?.message || 'Login failed. Please check your credentials.';
+      let msg = 'Login failed. Please check your credentials.';
+      if (!err.response) {
+        msg = 'Cannot connect to backend server! Please make sure backend is running (run `npm run dev` from root).';
+      } else if (err.response.data?.message) {
+        msg = err.response.data.message;
+      }
       setError(msg);
       showToast(msg, 'error');
     } finally {
