@@ -1,4 +1,5 @@
 const vehicleService = require('../services/vehicleService');
+const inventoryService = require('../services/inventoryService');
 const { validateCreateVehicleInput, validateUpdateVehicleInput } = require('../validations/vehicleValidation');
 
 /**
@@ -88,10 +89,45 @@ async function deleteVehicle(req, res, next) {
   }
 }
 
+/**
+ * POST /api/vehicles/:id/purchase
+ */
+async function purchaseVehicle(req, res, next) {
+  try {
+    const updatedVehicle = await inventoryService.purchaseVehicle(req.params.id);
+    return res.status(200).json({
+      success: true,
+      message: 'Vehicle purchased successfully',
+      data: updatedVehicle
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * POST /api/vehicles/:id/restock
+ */
+async function restockVehicle(req, res, next) {
+  try {
+    const amount = req.body ? req.body.amount : undefined;
+    const updatedVehicle = await inventoryService.restockVehicle(req.params.id, amount);
+    return res.status(200).json({
+      success: true,
+      message: 'Vehicle restocked successfully',
+      data: updatedVehicle
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   getVehicles,
   searchVehicles,
   createVehicle,
   updateVehicle,
-  deleteVehicle
+  deleteVehicle,
+  purchaseVehicle,
+  restockVehicle
 };

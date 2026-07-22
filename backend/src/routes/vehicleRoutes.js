@@ -13,4 +13,8 @@ router.post('/', requireAdmin, vehicleController.createVehicle);
 router.put('/:id', requireAdmin, vehicleController.updateVehicle);
 router.delete('/:id', requireAdmin, vehicleController.deleteVehicle);
 
+// Inventory purchase & restock routes
+router.post('/:id/purchase', vehicleController.purchaseVehicle);
+router.post('/:id/restock', requireAdmin, vehicleController.restockVehicle);
+
 module.exports = router;
