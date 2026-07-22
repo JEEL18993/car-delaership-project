@@ -327,6 +327,57 @@ Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
 https://github.com/JEEL18993/car-delaership-project
 ```
 
+## Prompt 6 - Vehicle Purchase & Restock (TDD)
+
+```text
+Implement vehicle purchase and restock functionality using TDD.
+
+First write failing tests for:
+
+POST /api/vehicles/:id/purchase
+
+Authenticated users can purchase one vehicle.
+Purchase decreases quantity by one.
+Quantity never becomes negative.
+Returns HTTP 400 when quantity is zero.
+Returns HTTP 404 for an unknown vehicle.
+Unauthenticated users are rejected.
+Normal users and admins can purchase.
+
+POST /api/vehicles/:id/restock
+
+Admin can increase vehicle quantity.
+Request body accepts a positive integer amount.
+Rejects zero, negative, decimal or missing amount.
+Normal users receive HTTP 403.
+Returns HTTP 404 for an unknown vehicle.
+
+Requirements:
+
+Put inventory calculations in an inventory service.
+Do not place inventory logic directly inside the controller.
+Reuse the vehicle repository.
+Prevent race-prone duplicate file operations as much as possible for this small JSON-file project.
+Return the updated vehicle.
+Append this prompt to PROMPTS.md.
+Run all tests and coverage.
+
+Create two commits:
+
+test: define inventory operation behaviour
+
+Added failing tests for vehicle purchase and admin restocking with AI assistance.
+
+Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
+
+feat: implement purchase and restock operations
+
+Implemented stock validation, vehicle purchasing and admin restocking after tests passed.
+
+Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
+```
+
+
 
 
 
