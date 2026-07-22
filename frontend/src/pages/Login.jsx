@@ -1,80 +1,119 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginUser } from '../api/authApi';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { authApi } from '../api/authApi';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setIsSubmitting(true);
+    setLoading(true);
 
     try {
-      const res = await loginUser({ email, password });
-      login(res.token, res.data);
-      navigate('/');
+      const data = await authApi.login({ email, password });
+      login(data.token, data.user);
+      showToast(`Welcome back, ${data.user.name}!`, 'success');
+      if (data.user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      const msg = err.response?.data?.message || 'Login failed. Please check your credentials.';
+      setError(msg);
+      showToast(msg, 'error');
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth-wrapper">
-      <div className="auth-header">
-        <h2>Welcome Back</h2>
-        <p>Sign in to access vehicle purchases and admin features</p>
+    <div className="auth-split-wrapper">
+      <div className="auth-visual-side">
+        <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem' }}>
+          Drive Your Dreams Forward
+        </h1>
+        <p style={{ fontSize: '1.1rem', color: '#e2e8f0', lineHeight: 1.6 }}>
+          Sign in to access exclusive dealership deals, manage your saved vehicles, and purchase cars directly online.
+        </p>
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+      <div className="auth-form-side">
+        <div className="auth-card">
+          <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '0.5rem' }}>
+            Account Sign In
+          </h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+            Enter your email and password to access AutoDrive
+          </p>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <div className="form-group">
-          <label htmlFor="email">Email Address</label>
-          <input
-            id="email"
-            type="email"
-            className="form-control"
-            required
-            placeholder="admin@dealership.com or user@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          {error && (
+            <div style={{ backgroundColor: 'var(--accent-red-light)', color: '#991b1b', padding: '0.85rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', fontSize: '0.9rem', fontWeight: 600 }}>
+              ⚠️ {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div className="form-group">
+              <label htmlFor="login-email">Email Address</label>
+              <input
+                id="login-email"
+                type="email"
+                required
+                className="form-control"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="login-password">Password</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="login-password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  className="form-control"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--text-muted)' }}
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" disabled={loading} className="btn btn-primary btn-block" style={{ padding: '0.85rem', marginTop: '0.5rem' }}>
+              {loading ? 'Signing In...' : 'Sign In'}
+            </button>
+          </form>
+
+          <p style={{ textAlign: 'center', marginTop: '2rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+            Don't have an account?{' '}
+            <Link to="/register" style={{ color: 'var(--accent-red)', fontWeight: 700 }}>
+              Register Here
+            </Link>
+          </p>
         </div>
-
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            className="form-control"
-            required
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
-        <button type="submit" disabled={isSubmitting} className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
-          {isSubmitting ? 'Signing In...' : 'Sign In'}
-        </button>
-
-        <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#64748b', marginTop: '1rem' }}>
-          Don't have an account?{' '}
-          <Link to="/register" style={{ color: '#2563eb', fontWeight: 600 }}>
-            Register here
-          </Link>
-        </p>
-      </form>
+      </div>
     </div>
   );
 };

@@ -1,14 +1,14 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, test, expect, beforeEach } from 'vitest';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider, useAuth } from '../context/AuthContext';
+import { ToastProvider } from '../context/ToastContext';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 
-// Helper component to test AuthContext actions
 const TestAuthConsumer = () => {
-  const { user, token, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   return (
     <div>
       <span data-testid="user-email">{user?.email || 'No User'}</span>
@@ -27,14 +27,16 @@ describe('Frontend Authentication Workflows', () => {
     render(
       <BrowserRouter>
         <AuthProvider>
-          <Register />
+          <ToastProvider>
+            <Register />
+          </ToastProvider>
         </AuthProvider>
       </BrowserRouter>
     );
 
-    const nameInput = screen.getByLabelText(/Full Name/i);
-    const emailInput = screen.getByLabelText(/Email Address/i);
-    const passwordInput = screen.getByLabelText(/Password/i);
+    const nameInput = screen.getByLabelText(/Full Name \*/i);
+    const emailInput = screen.getByLabelText(/Email Address \*/i);
+    const passwordInput = screen.getByPlaceholderText('••••••••');
 
     expect(nameInput).toBeRequired();
     expect(emailInput).toBeRequired();
@@ -45,13 +47,15 @@ describe('Frontend Authentication Workflows', () => {
     render(
       <BrowserRouter>
         <AuthProvider>
-          <Login />
+          <ToastProvider>
+            <Login />
+          </ToastProvider>
         </AuthProvider>
       </BrowserRouter>
     );
 
     const emailInput = screen.getByLabelText(/Email Address/i);
-    const passwordInput = screen.getByLabelText(/Password/i);
+    const passwordInput = screen.getByPlaceholderText('••••••••');
 
     expect(emailInput).toBeRequired();
     expect(passwordInput).toBeRequired();
@@ -68,8 +72,10 @@ describe('Frontend Authentication Workflows', () => {
 
     render(
       <AuthProvider>
-        <Wrapper />
-        <TestAuthConsumer />
+        <ToastProvider>
+          <Wrapper />
+          <TestAuthConsumer />
+        </ToastProvider>
       </AuthProvider>
     );
 
@@ -86,7 +92,9 @@ describe('Frontend Authentication Workflows', () => {
 
     render(
       <AuthProvider>
-        <TestAuthConsumer />
+        <ToastProvider>
+          <TestAuthConsumer />
+        </ToastProvider>
       </AuthProvider>
     );
 

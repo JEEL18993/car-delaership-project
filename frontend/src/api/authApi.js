@@ -9,3 +9,12 @@ export const loginUser = async (credentials) => {
   const response = await apiClient.post('/auth/login', credentials);
   return response.data;
 };
+
+export const authApi = {
+  register: registerUser,
+  login: loginUser,
+  registerUser,
+  loginUser
+};
+
+export default authApi;

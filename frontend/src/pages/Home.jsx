@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { getVehicles, searchVehicles, purchaseVehicle } from '../api/vehicleApi';
-import SearchFilters from '../components/SearchFilters';
+import { useNavigate } from 'react-router-dom';
+import HeroSearch from '../components/HeroSearch';
+import PopularBrands from '../components/PopularBrands';
 import VehicleList from '../components/VehicleList';
-import LoadingSpinner from '../components/LoadingSpinner';
+import WhyChooseUs from '../components/WhyChooseUs';
+import StatsSection from '../components/StatsSection';
+import { vehicleApi } from '../api/vehicleApi';
+import { useToast } from '../context/ToastContext';
 
 const Home = () => {
+  const navigate = useNavigate();
+  const { showToast } = useToast();
+
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [purchasingId, setPurchasingId] = useState(null);
 
   const fetchVehicles = async () => {
     setLoading(true);
-    setError('');
     try {
-      const response = await getVehicles();
-      setVehicles(response.data || []);
+      const data = await vehicleApi.getVehicles();
+      setVehicles(data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch vehicles');
+      showToast('Failed to load inventory', 'error');
     } finally {
       setLoading(false);
     }
@@ -28,33 +32,28 @@ const Home = () => {
     fetchVehicles();
   }, []);
 
-  const handleSearch = async (filters) => {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await searchVehicles(filters);
-      setVehicles(response.data || []);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Search failed');
-    } finally {
-      setLoading(false);
-    }
+  const handleHeroSearch = (filters) => {
+    const params = new URLSearchParams();
+    if (filters.make) params.set('make', filters.make);
+    if (filters.model) params.set('model', filters.model);
+    if (filters.category) params.set('category', filters.category);
+    if (filters.minPrice) params.set('minPrice', filters.minPrice);
+    if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
+    navigate(`/browse?${params.toString()}`);
   };
 
-  const handlePurchase = async (vehicleId) => {
-    setPurchasingId(vehicleId);
-    setError('');
-    setSuccess('');
-    try {
-      const res = await purchaseVehicle(vehicleId);
-      setSuccess('Vehicle purchased successfully!');
+  const handleSelectBrand = (brandName) => {
+    navigate(`/browse?make=${encodeURIComponent(brandName)}`);
+  };
 
-      // Immediately update local state
-      setVehicles((prev) =>
-        prev.map((v) => (v.id === vehicleId ? res.data : v))
-      );
+  const handlePurchase = async (id) => {
+    setPurchasingId(id);
+    try {
+      const updatedVehicle = await vehicleApi.purchaseVehicle(id);
+      setVehicles((prev) => prev.map((v) => (v.id === id ? updatedVehicle : v)));
+      showToast(`Successfully purchased ${updatedVehicle.make} ${updatedVehicle.model}!`, 'success');
     } catch (err) {
-      setError(err.response?.data?.message || 'Purchase failed');
+      showToast(err.response?.data?.message || 'Purchase failed', 'error');
     } finally {
       setPurchasingId(null);
     }
@@ -62,30 +61,38 @@ const Home = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '2.2rem', fontWeight: 700, color: '#0f172a' }}>
-          Explore Vehicle Inventory
-        </h1>
-        <p style={{ color: '#64748b' }}>
-          Browse premium vehicles, filter by make or price, and purchase directly.
-        </p>
-      </div>
+      <HeroSearch onSearch={handleHeroSearch} />
 
-      {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+      <PopularBrands onSelectBrand={handleSelectBrand} />
 
-      <SearchFilters onSearch={handleSearch} onReset={fetchVehicles} />
+      {/* Featured Vehicles Grid */}
+      <section className="section-container">
+        <div className="section-header">
+          <div>
+            <h2 className="section-title">Featured Vehicles</h2>
+            <p className="section-subtitle">Handpicked top deals available for immediate purchase</p>
+          </div>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => navigate('/browse')}
+          >
+            View All Cars →
+          </button>
+        </div>
 
-      {loading ? (
-        <LoadingSpinner />
-      ) : (
         <VehicleList
-          vehicles={vehicles}
+          vehicles={vehicles.slice(0, 6)}
+          loading={loading}
           onPurchase={handlePurchase}
           purchasingId={purchasingId}
-          onResetFilters={fetchVehicles}
+          onResetFilters={() => navigate('/browse')}
         />
-      )}
+      </section>
+
+      <WhyChooseUs />
+
+      <StatsSection />
     </div>
   );
 };

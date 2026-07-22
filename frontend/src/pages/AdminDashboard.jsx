@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { getVehicles, createVehicle, updateVehicle, deleteVehicle, restockVehicle } from '../api/vehicleApi';
+import { vehicleApi } from '../api/vehicleApi';
+import { useToast } from '../context/ToastContext';
 import VehicleForm from '../components/VehicleForm';
 import ConfirmDialog from '../components/ConfirmDialog';
 import RestockModal from '../components/RestockModal';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const AdminDashboard = () => {
+  const { showToast } = useToast();
+
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Modals state
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -21,10 +23,10 @@ const AdminDashboard = () => {
   const fetchVehicles = async () => {
     setLoading(true);
     try {
-      const res = await getVehicles();
-      setVehicles(res.data || []);
+      const data = await vehicleApi.getVehicles();
+      setVehicles(data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch inventory');
+      showToast(err.response?.data?.message || 'Failed to load inventory', 'error');
     } finally {
       setLoading(false);
     }
@@ -34,142 +36,196 @@ const AdminDashboard = () => {
     fetchVehicles();
   }, []);
 
-  const handleOpenAddForm = () => {
+  // Summary Metrics
+  const totalVehicles = vehicles.length;
+  const availableVehicles = vehicles.filter((v) => v.quantity > 0).length;
+  const outOfStockVehicles = vehicles.filter((v) => v.quantity === 0).length;
+  const totalInventoryUnits = vehicles.reduce((sum, v) => sum + Number(v.quantity || 0), 0);
+
+  // Search Filter
+  const filteredVehicles = vehicles.filter((v) =>
+    `${v.make} ${v.model} ${v.category}`.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Form Handlers
+  const handleOpenAdd = () => {
     setEditingVehicle(null);
     setIsFormOpen(true);
   };
 
-  const handleOpenEditForm = (vehicle) => {
+  const handleOpenEdit = (vehicle) => {
     setEditingVehicle(vehicle);
     setIsFormOpen(true);
   };
 
   const handleFormSubmit = async (formData) => {
     setIsSubmitting(true);
-    setError('');
-    setSuccess('');
     try {
       if (editingVehicle) {
-        const res = await updateVehicle(editingVehicle.id, formData);
-        setSuccess('Vehicle updated successfully!');
-        setVehicles((prev) => prev.map((v) => (v.id === editingVehicle.id ? res.data : v)));
+        const updated = await vehicleApi.updateVehicle(editingVehicle.id, formData);
+        setVehicles((prev) => prev.map((v) => (v.id === editingVehicle.id ? updated : v)));
+        showToast(`Vehicle ${updated.make} ${updated.model} updated successfully!`, 'success');
       } else {
-        const res = await createVehicle(formData);
-        setSuccess('Vehicle added successfully!');
-        setVehicles((prev) => [res.data, ...prev]);
+        const created = await vehicleApi.createVehicle(formData);
+        setVehicles((prev) => [created, ...prev]);
+        showToast(`Vehicle ${created.make} ${created.model} created successfully!`, 'success');
       }
       setIsFormOpen(false);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save vehicle');
+      showToast(err.response?.data?.message || 'Operation failed', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Delete Handler
   const handleDeleteConfirm = async () => {
     if (!deletingVehicle) return;
     setIsSubmitting(true);
-    setError('');
-    setSuccess('');
     try {
-      await deleteVehicle(deletingVehicle.id);
-      setSuccess('Vehicle deleted successfully!');
+      await vehicleApi.deleteVehicle(deletingVehicle.id);
       setVehicles((prev) => prev.filter((v) => v.id !== deletingVehicle.id));
+      showToast(`Vehicle ${deletingVehicle.make} ${deletingVehicle.model} deleted`, 'info');
       setDeletingVehicle(null);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to delete vehicle');
+      showToast(err.response?.data?.message || 'Failed to delete vehicle', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Restock Handler
   const handleRestockSubmit = async (id, amount) => {
     setIsSubmitting(true);
-    setError('');
-    setSuccess('');
     try {
-      const res = await restockVehicle(id, amount);
-      setSuccess(`Restocked ${amount} units successfully!`);
-      setVehicles((prev) => prev.map((v) => (v.id === id ? res.data : v)));
+      const updated = await vehicleApi.restockVehicle(id, amount);
+      setVehicles((prev) => prev.map((v) => (v.id === id ? updated : v)));
+      showToast(`Restocked ${amount} units for ${updated.make} ${updated.model}!`, 'success');
       setRestockingVehicle(null);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to restock vehicle');
+      showToast(err.response?.data?.message || 'Restock failed', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  if (loading) return <LoadingSpinner message="Loading Inventory Management Dashboard..." />;
+
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <div>
-          <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '2.2rem', fontWeight: 700, color: '#0f172a' }}>
-            Admin Inventory Dashboard
-          </h1>
-          <p style={{ color: '#64748b' }}>Manage dealership inventory: Add, update, delete, and restock vehicles.</p>
+    <div className="admin-layout">
+      {/* Sidebar */}
+      <aside className="admin-sidebar">
+        <div className="admin-sidebar-title">⚡ Admin Portal</div>
+        <nav>
+          <a href="#inventory" className="admin-nav-item active">
+            🚘 Vehicle Inventory
+          </a>
+          <a href="#analytics" className="admin-nav-item">
+            📊 Sales & Stock Logs
+          </a>
+        </nav>
+      </aside>
+
+      {/* Main Panel */}
+      <main className="admin-content">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <div>
+            <h1 className="section-title">Inventory Management</h1>
+            <p className="section-subtitle">Add, update, restock, and manage dealership inventory</p>
+          </div>
+          <button type="button" onClick={handleOpenAdd} className="btn btn-primary">
+            ➕ Add New Vehicle
+          </button>
         </div>
-        <button onClick={handleOpenAddForm} className="btn btn-primary">
-          ➕ Add New Vehicle
-        </button>
-      </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+        {/* Summary Metric Cards */}
+        <div className="stats-overview-grid">
+          <div className="stat-card">
+            <div className="stat-card-label">Total Car Models</div>
+            <div className="stat-card-value">{totalVehicles}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-label">Available Models</div>
+            <div className="stat-card-value" style={{ color: 'var(--accent-green)' }}>{availableVehicles}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-label">Out of Stock Models</div>
+            <div className="stat-card-value" style={{ color: 'var(--accent-red)' }}>{outOfStockVehicles}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-label">Total Units in Showroom</div>
+            <div className="stat-card-value">{totalInventoryUnits}</div>
+          </div>
+        </div>
 
-      {loading ? (
-        <LoadingSpinner message="Loading inventory..." />
-      ) : (
+        {/* Toolbar & Search Bar */}
+        <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search inventory by make, model or category..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        {/* Responsive Table */}
         <div className="table-responsive">
           <table className="admin-table">
             <thead>
               <tr>
                 <th>Vehicle</th>
                 <th>Category</th>
-                <th>Price</th>
-                <th>Stock Quantity</th>
-                <th>Actions</th>
+                <th>Price ($)</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {vehicles.length === 0 ? (
+              {filteredVehicles.length === 0 ? (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', color: '#64748b', padding: '2rem' }}>
-                    No vehicles found in inventory.
+                  <td colSpan="6" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                    No vehicles found matching search.
                   </td>
                 </tr>
               ) : (
-                vehicles.map((v) => (
-                  <tr key={v.id}>
-                    <td style={{ fontWeight: 600 }}>
-                      {v.year ? `${v.year} ` : ''}{v.make} {v.model}
-                    </td>
-                    <td>{v.category}</td>
-                    <td style={{ fontWeight: 700, color: '#2563eb' }}>${Number(v.price).toLocaleString()}</td>
+                filteredVehicles.map((vehicle) => (
+                  <tr key={vehicle.id}>
                     <td>
-                      <span className={`badge ${v.quantity === 0 ? 'badge-out-of-stock' : 'badge-in-stock'}`}>
-                        {v.quantity} Units
+                      <strong>{vehicle.year ? `${vehicle.year} ` : ''}{vehicle.make} {vehicle.model}</strong>
+                    </td>
+                    <td>{vehicle.category}</td>
+                    <td>${Number(vehicle.price).toLocaleString()}</td>
+                    <td>{vehicle.quantity}</td>
+                    <td>
+                      <span className={`badge ${vehicle.quantity === 0 ? 'badge-out-of-stock' : 'badge-in-stock'}`}>
+                        {vehicle.quantity === 0 ? 'Out of Stock' : 'In Stock'}
                       </span>
                     </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
                         <button
-                          onClick={() => handleOpenEditForm(v)}
+                          type="button"
+                          onClick={() => handleOpenEdit(vehicle)}
                           className="btn btn-secondary"
-                          style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}
+                          style={{ padding: '0.35rem 0.65rem', fontSize: '0.8rem' }}
                         >
                           ✏️ Edit
                         </button>
                         <button
-                          onClick={() => setRestockingVehicle(v)}
+                          type="button"
+                          onClick={() => setRestockingVehicle(vehicle)}
                           className="btn btn-success"
-                          style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}
+                          style={{ padding: '0.35rem 0.65rem', fontSize: '0.8rem' }}
                         >
                           📦 Restock
                         </button>
                         <button
-                          onClick={() => setDeletingVehicle(v)}
+                          type="button"
+                          onClick={() => setDeletingVehicle(vehicle)}
                           className="btn btn-danger"
-                          style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}
+                          style={{ padding: '0.35rem 0.65rem', fontSize: '0.8rem' }}
                         >
                           🗑️ Delete
                         </button>
@@ -181,30 +237,28 @@ const AdminDashboard = () => {
             </tbody>
           </table>
         </div>
-      )}
+      </main>
 
-      {/* Vehicle Add/Edit Modal */}
+      {/* Modals */}
       <VehicleForm
         isOpen={isFormOpen}
+        initialData={editingVehicle}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleFormSubmit}
-        initialData={editingVehicle}
         isSubmitting={isSubmitting}
       />
 
-      {/* Delete Confirmation Modal */}
       <ConfirmDialog
-        isOpen={Boolean(deletingVehicle)}
+        isOpen={!!deletingVehicle}
         title="Delete Vehicle"
-        message={`Are you sure you want to delete "${deletingVehicle?.make} ${deletingVehicle?.model}" from inventory? This action cannot be undone.`}
+        message={`Are you sure you want to delete ${deletingVehicle?.make} ${deletingVehicle?.model}? This action cannot be undone.`}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeletingVehicle(null)}
         isDeleting={isSubmitting}
       />
 
-      {/* Restock Modal */}
       <RestockModal
-        isOpen={Boolean(restockingVehicle)}
+        isOpen={!!restockingVehicle}
         vehicle={restockingVehicle}
         onClose={() => setRestockingVehicle(null)}
         onSubmit={handleRestockSubmit}

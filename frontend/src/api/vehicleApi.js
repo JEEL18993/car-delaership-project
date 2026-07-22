@@ -34,3 +34,15 @@ export const restockVehicle = async (id, amount) => {
   const response = await apiClient.post(`/vehicles/${id}/restock`, { amount });
   return response.data;
 };
+
+export const vehicleApi = {
+  getVehicles,
+  searchVehicles,
+  createVehicle,
+  updateVehicle,
+  deleteVehicle,
+  purchaseVehicle,
+  restockVehicle
+};
+
+export default vehicleApi;

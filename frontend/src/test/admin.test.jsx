@@ -3,6 +3,7 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '../context/AuthContext';
+import { ToastProvider } from '../context/ToastContext';
 import AdminRoute from '../components/AdminRoute';
 import VehicleForm from '../components/VehicleForm';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -20,17 +21,19 @@ describe('Frontend Admin Workflows', () => {
     render(
       <MemoryRouter initialEntries={['/admin']}>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<div>Home Page</div>} />
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute>
-                  <div>Admin Panel</div>
-                </AdminRoute>
-              }
-            />
-          </Routes>
+          <ToastProvider>
+            <Routes>
+              <Route path="/" element={<div>Home Page</div>} />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <div>Admin Panel</div>
+                  </AdminRoute>
+                }
+              />
+            </Routes>
+          </ToastProvider>
         </AuthProvider>
       </MemoryRouter>
     );
@@ -92,7 +95,6 @@ describe('Frontend Admin Workflows', () => {
 
   test('Restock modal requires a valid positive integer amount', () => {
     const handleSubmit = vi.fn();
-
     const sampleVehicle = { id: 'v1', make: 'Ford', model: 'Focus', quantity: 2 };
 
     render(

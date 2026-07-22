@@ -862,6 +862,71 @@ Removed realistic example credentials, fixed repository links and improved docum
 Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
 ```
 
+## Prompt 15 - Frontend Marketplace Redesign
+
+```text
+Upgrade the existing React frontend of my Car Dealership Inventory System into a professional, modern automotive marketplace inspired by platforms like CarDekho, Cars24, and OLX Autos.
+
+Important rules:
+
+* Do not copy any website exactly.
+* Create an original automotive marketplace design.
+* Do not change the existing backend APIs.
+* Do not remove existing tests.
+* Do not break authentication, vehicle search, purchase, admin CRUD, restock, or delete functionality.
+* Use React with JavaScript and Vite.
+* Use plain CSS3 only.
+* Do not use Tailwind, Bootstrap, Material UI, Chakra UI, or any external UI library.
+* Do not use TypeScript.
+* Keep the application responsive for desktop, tablet, and mobile.
+* Preserve the current folder structure where practical.
+* Refactor components only when required for better UI quality.
+
+Design direction:
+
+* Premium automotive marketplace appearance.
+* Clean white background with dark navy text.
+* Use red or orange as the primary accent color.
+* Add subtle gray backgrounds, borders, gradients, shadows, rounded cards, hover animations, and clear spacing.
+* Use professional typography with a modern system font stack.
+* Avoid excessive animations.
+* Make the design look like a real production car-selling platform rather than a student CRUD project.
+
+Create or upgrade the following UI areas:
+
+1. Global layout
+2. Homepage hero section
+3. Featured vehicles section
+4. Vehicle listing page
+5. Vehicle details page (/vehicles/:id)
+6. Popular brands section
+7. Why choose us section
+8. Statistics section
+9. Authentication pages
+10. User profile area
+11. Admin dashboard
+12. Vehicle form
+13. Toast notifications
+14. Reusable components
+15. CSS architecture
+16. Accessibility
+17. Responsive requirements
+18. Image handling
+19. Frontend tests
+20. Final verification
+
+Append this complete prompt to PROMPTS.md.
+
+Use this Git commit message:
+
+feat: redesign frontend as modern automotive marketplace
+
+Upgraded the React interface with a responsive automotive marketplace layout, improved vehicle browsing, professional admin tools, accessibility, and polished user experience with AI assistance.
+
+Co-authored-by: AI Assistant ai-assistant@users.noreply.github.com
+```
+
+
 
 
 

@@ -1,13 +1,14 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, test, expect, vi } from 'vitest';
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import VehicleCard from '../components/VehicleCard';
-import VehicleList from '../components/VehicleList';
-import SearchFilters from '../components/SearchFilters';
-import EmptyState from '../components/EmptyState';
+import HeroSearch from '../components/HeroSearch';
+import PopularBrands from '../components/PopularBrands';
 import { AuthProvider } from '../context/AuthContext';
+import { ToastProvider } from '../context/ToastContext';
 
-describe('Frontend Vehicle Workflows', () => {
+describe('Frontend Marketplace Vehicle Workflows', () => {
   const sampleVehicle = {
     id: 'v100',
     make: 'Toyota',
@@ -24,17 +25,22 @@ describe('Frontend Vehicle Workflows', () => {
     quantity: 0
   };
 
-  test('Vehicle card displays vehicle information correctly', () => {
+  test('Vehicle card displays vehicle title, price, category badge, and details button', () => {
     render(
-      <AuthProvider>
-        <VehicleCard vehicle={sampleVehicle} />
-      </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <ToastProvider>
+            <VehicleCard vehicle={sampleVehicle} />
+          </ToastProvider>
+        </AuthProvider>
+      </BrowserRouter>
     );
 
     expect(screen.getByText(/Toyota Corolla/i)).toBeInTheDocument();
     expect(screen.getByText('Sedan')).toBeInTheDocument();
     expect(screen.getByText('$22,000')).toBeInTheDocument();
-    expect(screen.getByText('3 Available')).toBeInTheDocument();
+    expect(screen.getByText('3 Left')).toBeInTheDocument();
+    expect(screen.getByText(/View Details/i)).toBeInTheDocument();
   });
 
   test('Purchase button is disabled when vehicle quantity is zero', () => {
@@ -42,12 +48,16 @@ describe('Frontend Vehicle Workflows', () => {
     localStorage.setItem('user', JSON.stringify({ name: 'Bob', role: 'user' }));
 
     render(
-      <AuthProvider>
-        <VehicleCard vehicle={outOfStockVehicle} />
-      </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <ToastProvider>
+            <VehicleCard vehicle={outOfStockVehicle} />
+          </ToastProvider>
+        </AuthProvider>
+      </BrowserRouter>
     );
 
-    const button = screen.getByRole('button', { name: /Purchase/i });
+    const button = screen.getByRole('button', { name: /Out of stock/i });
     expect(button).toBeDisabled();
   });
 
@@ -58,9 +68,13 @@ describe('Frontend Vehicle Workflows', () => {
     const handlePurchase = vi.fn();
 
     render(
-      <AuthProvider>
-        <VehicleCard vehicle={sampleVehicle} onPurchase={handlePurchase} />
-      </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <ToastProvider>
+            <VehicleCard vehicle={sampleVehicle} onPurchase={handlePurchase} />
+          </ToastProvider>
+        </AuthProvider>
+      </BrowserRouter>
     );
 
     const button = screen.getByRole('button', { name: /Purchase/i });
@@ -69,16 +83,15 @@ describe('Frontend Vehicle Workflows', () => {
     expect(handlePurchase).toHaveBeenCalledWith('v100');
   });
 
-
-  test('Search filters send correct query parameters on submit', () => {
+  test('HeroSearch form submits search filters correctly', () => {
     const handleSearch = vi.fn();
 
-    render(<SearchFilters onSearch={handleSearch} onReset={() => {}} />);
+    render(<HeroSearch onSearch={handleSearch} />);
 
     fireEvent.change(screen.getByLabelText(/Make/i), { target: { value: 'Honda' } });
     fireEvent.change(screen.getByLabelText(/Min Price/i), { target: { value: '15000' } });
 
-    fireEvent.click(screen.getByRole('button', { name: /Search/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Search Cars/i }));
 
     expect(handleSearch).toHaveBeenCalledWith({
       make: 'Honda',
@@ -89,10 +102,13 @@ describe('Frontend Vehicle Workflows', () => {
     });
   });
 
-  test('Empty state appears when no vehicles are available in list', () => {
-    render(<VehicleList vehicles={[]} onResetFilters={() => {}} />);
+  test('PopularBrands card click triggers brand filter handler', () => {
+    const handleSelectBrand = vi.fn();
 
-    expect(screen.getByRole('heading', { name: /No Vehicles Found/i })).toBeInTheDocument();
+    render(<PopularBrands onSelectBrand={handleSelectBrand} />);
+
+    fireEvent.click(screen.getByText('Toyota'));
+
+    expect(handleSelectBrand).toHaveBeenCalledWith('Toyota');
   });
 });
-

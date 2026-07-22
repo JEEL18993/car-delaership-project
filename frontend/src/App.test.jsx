@@ -6,10 +6,10 @@ import App from './App';
 describe('App Component Rendering', () => {
   test('should render the application header and navigation links', () => {
     render(<App />);
-    const inventoryLink = screen.getByText('Inventory');
-    expect(inventoryLink).toBeInTheDocument();
+    const homeLink = screen.getByText('Home');
+    expect(homeLink).toBeInTheDocument();
 
-    const loginLink = screen.getByText('Login');
-    expect(loginLink).toBeInTheDocument();
+    const browseLinks = screen.getAllByText('Browse Cars');
+    expect(browseLinks[0]).toBeInTheDocument();
   });
 });
