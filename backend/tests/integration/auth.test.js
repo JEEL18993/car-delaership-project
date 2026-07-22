@@ -13,8 +13,28 @@ describe('Authentication API Endpoints (Integration)', () => {
   });
 
   afterAll(async () => {
-    // Clean up after all tests
-    await writeJsonFile(usersFilePath, []);
+    // Clean up after all tests and restore default accounts
+    const adminHash = await bcrypt.hash('AdminPassword123!', 10);
+    const userHash = await bcrypt.hash('Password123!', 10);
+    const defaultAccounts = [
+      {
+        id: 'admin-id-1',
+        name: 'System Admin',
+        email: 'admin@example.com',
+        password: adminHash,
+        role: 'admin',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 'user-id-1',
+        name: 'Jeel Gohel',
+        email: 'omgohel51@gmail.com',
+        password: userHash,
+        role: 'user',
+        createdAt: new Date().toISOString()
+      }
+    ];
+    await writeJsonFile(usersFilePath, defaultAccounts);
   });
 
   describe('POST /api/auth/register', () => {
